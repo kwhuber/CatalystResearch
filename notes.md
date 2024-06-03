@@ -49,7 +49,7 @@
                     * **REST:** stands for Representational State Transfer and is an architectural style for designing networked applications
                         * in REST, everything is a **resource**
                             * **resource:** an object or piece of data that can be accessed via a unique identifier (URL)
-                            * can be anything from individual data items (e.g. user profile) or collections of data (e.g. list of products)
+                                * can be anything from individual data items (e.g. user profile) or collections of data (e.g. list of products)
                         * RESTful APIs simplifies client-server interactions by using standard HTTP methods to perform **CRUD** operations on resources
                             * **CRUD:** stands for Create, Read, Update, and Delete
                                 * four basic functions that are used in database and web apps for managing data
@@ -66,6 +66,61 @@
 * commonly used for building back-end services, like APIs for web applications, mobile applications, etc. 
 * its scalability and extensive libraries make it attractive for building large-scale apps
 
-
 ## Express JS
 * a framework that sits on top of Node JS's web server functionality to simplify its APIs and add helpful new features
+
+# Keycloak
+* Keycloak is an open source Identity and Access Management (IAM) solution designed to secure applications and services, providing a set of features to handle user authentication and authorization
+* **Identity Management:** deals with identifying and managing users; things like user registration, user profile management, and managing credentials
+* **Access Management:** who can access what within an application, typically through roles and permissions 
+* **Authentication:** process of verifying who a user is; Keyclock supports various authentication methods like username/password, social logins (Google, Facebook), and single sign-on (SSO)
+* **Keycloak Components:** 
+    * **Realms:** a realm is a space within Keycloak where you manage a set of **users**, credentials, **roles**, and **groups**
+        * realms are isolated from one another, meaning users in one realm cannot see or interact with users in another realm
+        * **Users:** individuals who have accounts in a realm
+        * **Roles:** a way to assign permissions to users
+            * Keycloak supports realm roles and **client** roles
+                * **Client:** a client in Keycloak represents an application or service; clients request authentication from Keycloak
+                    * e.g. web applicationns, mobile applications, RESTful web services
+        * **Groups:** collections of users that can be managed together
+    * **Identity Providers (IdPs):** external systems that can authenticate users
+        * e.g. social networks (Google, Facebook) and enterprise systems (**LDAP**, **Active Directory (AD)**)
+            * **LDAP:** an interface for communicating with directory services such as **AD**
+            * **AD:** provides a database and services for IAM
+* How Keycloak works
+    * install Keycloak on a server
+    * create a realm for your application
+    * define clients representing your applications
+    * set up identity providers if you want to use external authenticaion
+    * configure roles and groups as needed
+    * integrate your applications with Keycloak; this typically involves configuring the application to use Keycloak for authentication and authorization 
+    * use the Keycloak admin console to manage users, monitor login activity, etc.
+
+# OAuth2 Proxy 
+* OAuth2 Proxy is an open-source **reverse proxy** and authentication service
+* OAuth2 Proxy is designed to secure web applications by requiring users to authenticate through an **OAuth 2.0** or **OpenID Connect (OIDC)** provider before accessing the application; it integrates with various identity providers (IdPs) like Google, Github, Azure AD, and more; once users authenticate successfully, OAuth2 Proxy forwards the authenticated requests to your application
+    * **Reverse Proxy:** a reverse proxy sits in front of your web server, receiving client requests and forwarding them to the appropriate backend service; OAuth2 Proxy adds an authentication layer to this process
+    * **OAuth 2.0:** an authorization framework that allows third-party services to exchange credentials and authorize user access
+    * **OIDC:** an identity layer on top of OAuth 2.0 that provides authentication and user info
+* How it works: 
+    * user requests access to a protected resource (e.g. web application)
+    * OAuth2 Proxy intercepts the request and checks for an existing authenticated session
+    * if no session exits, OAuth2 Proxy redirects the user to the identity provider's login page
+    * the user authenticates with the IdPs
+    * the IdPs redirects the user back to OAuth2 Proxy with an authorization code
+    * OAuth2 Proxy exchanges the authorization code for an access token and possibly a refresh token 
+    * OAuth2 Proxy creates a session for the user and sets a cookies to manage the session 
+    * the user is redirected to the original resource request, now with an authenticated session
+* One of the IdPs that OAuth2 Proxy supports is Keycloak and others include Google, Github, Azure AD, etc.
+
+# Nginx
+* pronounced "engine-x"
+* open-source software originally created as a **web server** designed for maximum performance and stability...over time it has evolved to include reverse proxying, load balancing, caching, and more 
+    * **Web Server:** Nginx can serve static files (HTML, CSS, and JavaScript) directly to clients; can handle large number of requests simultaneously    
+        * as a web server Nginx is responsible for handling HTTP requests from clients (such as web browsers) and serving web content (HTML pages, CSS, JavaScript files, and images)
+    * **Reverse Proxy:** as a reverse proxy, Nginx sits between clients and backend servers, forwarding client requests to the appropriate backend service and returning the server's response to the client
+        * this is useful for load balancing, caching, and securing backend services
+    * **Load Balancer:** Nginx can distribute incoming traffic across multiple backend servers to balance the load and improve performance
+        * such algorithms include round-robin, least connections, and IP hash
+    * **Caching:** Nginx can cache responses from backend servers to reduce the load and improve the speed of serving repeated requests; this is useful for dynamic content that doesn't change often
+* Nginx will forward requests through OAuth2 Proxy
